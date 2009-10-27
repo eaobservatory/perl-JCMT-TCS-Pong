@@ -1,0 +1,104 @@
+#!perl
+
+=head1 NAME
+
+ponglen - Estimate the duration of a pong scan
+
+=head1 SYNOPSIS
+
+  ponglen map_width map_height dy velocity [type=CURVY|ROUNDED|SQUARE|LISSAJOUS]
+  ponglen map_width map_height dy velocity [type] | awk '{print $1}'
+
+=head1 DESCRIPTION
+
+Calculate the duration of a pong pattern given a definition of the map area
+and a scan velocity. The type is optional and specifies the type of pong pattern
+(CURVY, ROUNDED and SQUARE) and defaults to CURVY.
+
+When called when attached to a pipe only the result is sent to the pipe
+and not the area definition.
+
+=cut
+
+use strict;
+use warnings;
+use Pod::Usage;
+use Getopt::Long;
+
+use JCMT::TCS::Pong;
+
+# Options
+my ($help, $man, $version, );
+my $status = GetOptions("help" => \$help,
+                        "man" => \$man,
+                        "version" => \$version,
+                       );
+
+pod2usage(1) if !$status;
+
+pod2usage(1) if $help;
+pod2usage(-exitstatus => 0, -verbose => 2) if $man;
+
+if ($version) {
+  print "ponglen - calculate the duration of a pong pattern\n";
+  exit;
+}
+
+if (@ARGV < 4 || @ARGV > 5) {
+  print "Must provide 4 or 5 arguments\n";
+  pod2usage(1);
+}
+
+my ($width, $height, $dy, $velocity, $type) = @ARGV;
+
+# Sort out type
+$type = 'CURVY' unless defined $type;
+$type = uc($type);
+$type .= "_PONG" unless $type =~ /LISS/;
+
+
+my $duration = JCMT::TCS::Pong::get_pong_dur( WIDTH => $width,
+                                              HEIGHT => $height,
+                                              SYSTEM => "FPLANE",
+                                              VELOCITY => $velocity,
+                                              PATTERN => $type,
+                                              DY => $dy );
+
+# Is something attached to STDOUT? Then just write it out
+if (!-t STDOUT) {
+  print $duration;
+} else {
+  # summarize
+  print "Map width          = $width arcsec\n";
+  print "Map height         = $height arcsec\n";
+  print "Scan spacing       = $dy arcsec\n";
+  print "Scan velocity      = $velocity arcsec/sec\n";
+  print "Pong type          = $type\n";
+  print "Estimated duration = $duration sec\n";
+}
+
+
+
+=head1 AUTHOR
+
+Tim Jenness E<lt>t.jenness@jach.hawaii.eduE<gt>
+
+Copyright (C) 2009 Science & Technology Facilities Council.
+All Rights Reserved.
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 3 of
+the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even the implied
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public
+License along with this program; if not, write to the Free
+Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,
+MA 02111-1307, USA
+
+=cut

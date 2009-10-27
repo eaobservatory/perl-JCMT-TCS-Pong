@@ -4,4 +4,5 @@ WriteMakefile(
 	      'VERSION'   => '0.1',
 	      'OBJECT'    => 'Pong.o ocsPtcsComputePong.o',
 	      'DEFINE'    => '-DSTATUS__OK=0',
+              'EXE_FILES' => [qw/ ponglen /],
     );

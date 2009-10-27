@@ -34,6 +34,7 @@ _get_pong_dur( height, width, dy, velocity, type)
   scanParam.dy = dy;
   scanParam.velocity = velocity;
   strcpy(scanParam.pattern, "PONG");
+  strcpy(scanParam.type, type );
 
   /* Compute the vertices (i.e., reflection points) for the PONG
      pattern. This also computes the period of the CURVY_PONG

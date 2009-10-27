@@ -20,6 +20,7 @@ use 5.006;
 use strict;
 use warnings;
 use Carp;
+use Scalar::Util qw/ looks_like_number /;
 
 use vars qw/ $VERSION @EXPORT_OK /;
 $VERSION = '0.1';
@@ -53,6 +54,13 @@ sub get_pong_dur {
   croak "Not a PONG pattern. Is a $scan{PATTERN}\n"
     unless $scan{PATTERN} =~ /LISS|PONG/;
 
+  for my $k (qw/ HEIGHT WIDTH VELOCITY DY /) {
+    croak "Must provide value for $k"
+      unless defined $scan{$k};
+    croak "Item $k must be a number. Currently is '$scan{$k}'"
+      unless looks_like_number( $scan{$k} );
+  }
+
   my $height = $scan{HEIGHT};
   my $width = $scan{WIDTH};
   my $velocity = $scan{VELOCITY};
@@ -61,7 +69,7 @@ sub get_pong_dur {
   my $type = 'CURVY';
   if ($scan{PATTERN} =~ /^(SQUARE|CURVY|ROUNDED)_PONG/) {
     $type =  $1;
-  } elsif ($scan{PATTERN} eq 'LISSAJOUS') {
+  } elsif ($scan{PATTERN} =~ /^(LISS)/) {
     $type = "CURVY";
   } else {
     croak "Unrecognized pong pattern '$scan{PATTERN}'";

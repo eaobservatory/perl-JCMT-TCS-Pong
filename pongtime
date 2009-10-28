@@ -2,12 +2,12 @@
 
 =head1 NAME
 
-ponglen - Estimate the duration of a pong scan
+pongtime - Estimate the duration of a pong scan
 
 =head1 SYNOPSIS
 
-  ponglen map_width map_height dy velocity [type=CURVY|ROUNDED|SQUARE|LISSAJOUS]
-  ponglen map_width map_height dy velocity [type] | awk '{print $1}'
+  pongtime map_width map_height dy velocity [type=CURVY|ROUNDED|SQUARE|LISSAJOUS]
+  pongtime map_width map_height dy velocity [type] | awk '{print $1}'
 
 =head1 DESCRIPTION
 
@@ -40,7 +40,7 @@ pod2usage(1) if $help;
 pod2usage(-exitstatus => 0, -verbose => 2) if $man;
 
 if ($version) {
-  print "ponglen - calculate the duration of a pong pattern\n";
+  print "pongtime - calculate the duration of a pong pattern\n";
   exit;
 }
 
